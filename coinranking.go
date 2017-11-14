@@ -2,22 +2,26 @@ package main
 
 import (
   "fmt"
-  "github.com/anaskhan96/soup"
-  "os"
+  "github.com/PuerkitoBio/goquery"
+  "log"
 )
 
-func main() {
-  url := "https://coinranking.com/"
-  fmt.Println("Source :", url)
-  response, error := soup.Get(url)
+const baseURL string = "https://coinranking.com/"
 
-  // Add error handling, will terminate everything if error is not nil
-  if error != nil {
-    os.Exit(1)
+func ScrapeForTop10Coins() {
+  doc, err := goquery.NewDocument(baseURL)
+  if err != nil {
+    log.Fatal(err)
   }
 
-  doc := soup.HTMLParse(response)
-  title := doc.Find("a", "class", "coin-list__body__row").Find("span", "class", "coin-name").Text()
+  // Find the coins list
+  doc.Find(".coin-list__body__row").Each(func(i int, s *goquery.Selection) {
+    // For each item found, get the name
+    name := s.Find(".coin-name").Text()
+    fmt.Println("Crypto name :", name)
+  })
+}
 
-  fmt.Println("Crypto name :", title)
+func main() {
+  ScrapeForTop10Coins()
 }
