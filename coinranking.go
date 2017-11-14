@@ -14,11 +14,17 @@ func ScrapeForTop10Coins() {
     log.Fatal(err)
   }
 
-  // Find the coins list
-  doc.Find(".coin-list__body__row").Each(func(i int, s *goquery.Selection) {
+  // Find the coins list, limited to top 20
+  coins := doc.Find(".coin-list__body__row").Slice(0,20)
+  var counter int = 0 
+
+  coins.Each(func(i int, s *goquery.Selection) {
     // For each item found, get the name
     name := s.Find(".coin-name").Text()
-    fmt.Println("Crypto name :", name)
+    price := s.Find(".coin-list__body__row__price__value").Text()
+    
+    counter ++
+    fmt.Printf("%v. %v $%v \n", counter, name, price)
   })
 }
 
