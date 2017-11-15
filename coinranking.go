@@ -5,10 +5,24 @@ import (
   "log"
   "strings"
   "github.com/PuerkitoBio/goquery"
-  "github.com/logrusorgru/aurora"
+  "github.com/fatih/color"
 )
 
 const baseURL string = "https://coinranking.com/"
+
+func getColors(amount string, isNegative bool) string {
+  if isNegative {
+
+    red := color.New(color.FgRed).SprintFunc()
+    return red(amount)
+
+  } else {
+
+    green := color.New(color.FgGreen).SprintFunc()
+    return green(amount)
+    
+  }
+}
 
 func ScrapeForTop10Coins() {
   doc, err := goquery.NewDocument(baseURL)
@@ -41,11 +55,7 @@ func ScrapeForTop10Coins() {
 
     counter ++
 
-    if isNegative { 
-      fmt.Printf("%v. %v $%v %v \n", counter, name, price, aurora.Red(stringifiedAmount))
-    } else {
-      fmt.Printf("%v. %v $%v %v \n", counter, name, price, aurora.Green(stringifiedAmount))
-    }
+    fmt.Printf("%v. %v $%v %v \n", counter, name, price, getColors(stringifiedAmount, isNegative))
   })
 }
 
