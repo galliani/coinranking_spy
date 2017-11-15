@@ -43,7 +43,7 @@ func formatPriceChange(s *goquery.Selection) string {
   return getColors(signedAmount, isNegative)
 }
 
-func ScrapeForTop10Coins() {
+func ScrapeForTopCoins() {
   doc, err := goquery.NewDocument(baseURL)
   if err != nil {
     log.Fatal(err)
@@ -55,7 +55,7 @@ func ScrapeForTop10Coins() {
 
   coins.Each(func(i int, s *goquery.Selection) {
     counter ++
-        
+
     // For each item found, get the name
     name := s.Find(".coin-name").Text()
     price := s.Find(".coin-list__body__row__price__value").Text()
@@ -68,5 +68,5 @@ func ScrapeForTop10Coins() {
 }
 
 func main() {
-  ScrapeForTop10Coins()
+  ScrapeForTopCoins()
 }
