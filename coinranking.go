@@ -20,8 +20,27 @@ func getColors(amount string, isNegative bool) string {
 
     green := color.New(color.FgGreen).SprintFunc()
     return green(amount)
-    
+
   }
+}
+
+func formatPriceChange(s *goquery.Selection) string {
+  var sign string
+  
+  isNegative := s.HasClass("coin-list__body__row__change--negative")
+  amountRaw := s.Text()
+  // This is necessary because the original text parsed contains whitespaces
+  amount := strings.TrimSpace(amountRaw)    
+
+  if isNegative { 
+    sign = "-" 
+  } else { 
+    sign = "+" 
+  }
+
+  signedAmount := sign + amount
+
+  return getColors(signedAmount, isNegative)
 }
 
 func ScrapeForTop10Coins() {
@@ -35,27 +54,16 @@ func ScrapeForTop10Coins() {
   var counter int = 0 
 
   coins.Each(func(i int, s *goquery.Selection) {
-    var sign string
+    counter ++
+        
     // For each item found, get the name
     name := s.Find(".coin-name").Text()
     price := s.Find(".coin-list__body__row__price__value").Text()
-    change := s.Find(".coin-list__body__row__change")
-    isNegative := change.HasClass("coin-list__body__row__change--negative")
+    changeElement := s.Find(".coin-list__body__row__change")
     
-    // This is necessary because the original text parsed contains whitespaces
-    amount := strings.TrimSpace(change.Text())    
+    stringifiedChange := formatPriceChange(changeElement)
 
-    if isNegative { 
-      sign = "-" 
-    } else { 
-      sign = "+" 
-    }
-
-    stringifiedAmount := sign + amount
-
-    counter ++
-
-    fmt.Printf("%v. %v $%v %v \n", counter, name, price, getColors(stringifiedAmount, isNegative))
+    fmt.Printf("%v. %v $%v %v \n", counter, name, price, stringifiedChange)
   })
 }
 
