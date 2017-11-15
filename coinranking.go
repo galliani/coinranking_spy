@@ -5,7 +5,7 @@ import (
   "log"
   "strings"
   "github.com/PuerkitoBio/goquery"
-  // "github.com/logrusorgru/aurora"
+  "github.com/logrusorgru/aurora"
 )
 
 const baseURL string = "https://coinranking.com/"
@@ -28,18 +28,24 @@ func ScrapeForTop10Coins() {
     change := s.Find(".coin-list__body__row__change")
     isNegative := change.HasClass("coin-list__body__row__change--negative")
     
-    amount := change.Text()    
     // This is necessary because the original text parsed contains whitespaces
-    parsedAmount := strings.TrimSpace(amount)
+    amount := strings.TrimSpace(change.Text())    
 
-    if isNegative {
-      sign = "-"
-    } else {
-      sign = "+"
+    if isNegative { 
+      sign = "-" 
+    } else { 
+      sign = "+" 
     }
 
+    stringifiedAmount := sign + amount
+
     counter ++
-    fmt.Printf("%v. %v $%v %v%v \n", counter, name, price, sign, parsedAmount)
+
+    if isNegative { 
+      fmt.Printf("%v. %v $%v %v \n", counter, name, price, aurora.Red(stringifiedAmount))
+    } else {
+      fmt.Printf("%v. %v $%v %v \n", counter, name, price, aurora.Green(stringifiedAmount))
+    }
   })
 }
 
